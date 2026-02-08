@@ -152,18 +152,29 @@
 	(net 28 "unconnected-(U3-NC-Pad1)")
 	(net 29 "RX1")
 	(net 30 "TX1")
+<<<<<<< HEAD
 	(net 31 "unconnected-(U5-GPIO12-Pad12)")
+=======
+	(net 31 "unconnected-(U5-GPIO21-Pad21)")
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 	(net 32 "BAT+")
 	(net 33 "BAT-")
 	(net 34 "unconnected-(U5-GPIO5-Pad5)")
 	(net 35 "unconnected-(U5-GPIO4-Pad4)")
 	(net 36 "unconnected-(U5-PadTX)")
 	(net 37 "unconnected-(U5-PadRX)")
+<<<<<<< HEAD
 	(net 38 "Net-(PS1-AC{slash}L)")
 	(net 39 "unconnected-(PS1-AC{slash}N-Pad2)")
 	(net 40 "unconnected-(U5-GPIO13-Pad13)")
 	(net 41 "unconnected-(D2-DOUT-Pad2)")
 	(net 42 "unconnected-(F1-Pad1)")
+=======
+	(net 38 "unconnected-(PS1-AC{slash}L-Pad1)")
+	(net 39 "unconnected-(PS1-AC{slash}N-Pad2)")
+	(net 40 "unconnected-(U5-GPIO22-Pad22)")
+	(net 41 "unconnected-(D2-DOUT-Pad2)")
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 	(footprint "Converter_ACDC:Converter_ACDC_Hi-Link_HLK-5Mxx"
 		(layer "F.Cu")
 		(uuid "02b57c63-68f2-41d9-81ff-0a356109a12d")
@@ -337,7 +348,11 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(roundrect_rratio 0.147059)
+<<<<<<< HEAD
 			(net 38 "Net-(PS1-AC{slash}L)")
+=======
+			(net 38 "unconnected-(PS1-AC{slash}L-Pad1)")
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 			(pinfunction "AC/L")
 			(pintype "power_in")
 			(uuid "28a7eaaf-11ce-4e9a-a08c-7320feb169a8")
@@ -590,7 +605,11 @@
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "13889694-1e4b-4208-b018-1cb47727af02")
+<<<<<<< HEAD
 		(at 100.97 114.2 -90)
+=======
+		(at 100.8 114.2 -90)
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing), generated with kicad-footprint-generator")
 		(tags "capacitor")
 		(property "Reference" "C1"
@@ -2027,9 +2046,9 @@
 			(uuid "2b1aa1fc-aea9-4394-9441-02a549fb875d")
 		)
 		(embedded_fonts no)
-		(model "C:/Users/devos/Documents/KiCad/9.0/custom_jerry/custom_jerry.pretty/cozir 3D model v1.step"
+		(model "C:/Users/devos/Documents/KiCad/9.0/custom_jerry/custom_jerry.pretty/cozir v2.step"
 			(offset
-				(xyz 14.5 5 0)
+				(xyz 14.5 5 0.5)
 			)
 			(scale
 				(xyz 1 1 1)
@@ -2241,7 +2260,11 @@
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "56d4547e-ba1d-4de0-a1c2-2c7eac49b29a")
+<<<<<<< HEAD
 		(at 101.4508 104.8027 180)
+=======
+		(at 101.45075 104.80272 180)
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing), generated with kicad-footprint-generator")
 		(tags "capacitor")
 		(property "Reference" "C6"
@@ -3801,6 +3824,7 @@
 			)
 		)
 	)
+<<<<<<< HEAD
 	(footprint "Fuse:Fuse_Bourns_MF-RG300"
 		(layer "F.Cu")
 		(uuid "c6642b9c-eb11-4357-b6ed-f25826f2dfb2")
@@ -4062,6 +4086,8 @@
 			)
 		)
 	)
+=======
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 	(footprint "BH1750FVI-TR:XDCR_BH1750FVI-TR"
 		(layer "F.Cu")
 		(uuid "cfbfa039-b458-4e32-9baf-5275b4e083f1")
@@ -5389,7 +5415,11 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "f9b8c4a9-aac1-4200-87a8-1930f4f1eb3f")
+<<<<<<< HEAD
 		(at 101.4408 106.9027 180)
+=======
+		(at 101.44075 106.90272 180)
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "resistor")
 		(property "Reference" "R5"
@@ -6376,7 +6406,11 @@
 			(drill 0.84)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
+<<<<<<< HEAD
 			(net 31 "unconnected-(U5-GPIO12-Pad12)")
+=======
+			(net 25 "SCL")
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 			(pinfunction "GPIO12")
 			(pintype "bidirectional+no_connect")
 			(solder_mask_margin 0.102)
@@ -6388,7 +6422,11 @@
 			(drill 0.84)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
+<<<<<<< HEAD
 			(net 40 "unconnected-(U5-GPIO13-Pad13)")
+=======
+			(net 26 "SDA")
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 			(pinfunction "GPIO13")
 			(pintype "bidirectional+no_connect")
 			(solder_mask_margin 0.102)
@@ -6460,9 +6498,13 @@
 			(drill 0.84)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
+<<<<<<< HEAD
 			(net 25 "SCL")
+=======
+			(net 31 "unconnected-(U5-GPIO21-Pad21)")
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 			(pinfunction "GPIO21")
-			(pintype "bidirectional")
+			(pintype "bidirectional+no_connect")
 			(solder_mask_margin 0.102)
 			(uuid "a943c131-8f55-4a6b-b913-29bedc8f711b")
 		)
@@ -6472,7 +6514,11 @@
 			(drill 0.84)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
+<<<<<<< HEAD
 			(net 26 "SDA")
+=======
+			(net 40 "unconnected-(U5-GPIO22-Pad22)")
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 			(pinfunction "GPIO22")
 			(pintype "bidirectional")
 			(solder_mask_margin 0.102)
@@ -9300,6 +9346,7 @@
 			)
 		)
 	)
+<<<<<<< HEAD
 	(segment
 		(start 103.02 110.8625)
 		(end 100.9008 110.8625)
@@ -13941,6 +13988,12 @@
 			"6e9e122a-04d3-4453-a572-3b4811c2b9d6" "aaca54c6-3d02-4c95-bc9e-83639a0d15d5"
 			"c6231a7b-ec96-4418-8a00-4e5305f37534" "cd6c2313-c2e3-44b2-aa61-fc454089bc8c"
 			"cfbfa039-b458-4e32-9baf-5275b4e083f1" "dd8bcd97-106f-48a0-970e-24dcc1faca7c"
+=======
+	(group ""
+		(uuid "20687f48-88dd-4531-979b-8175eb7a96aa")
+		(members "114d8998-eca9-409e-a89c-a6c59bd6deaf" "13889694-1e4b-4208-b018-1cb47727af02"
+			"56d4547e-ba1d-4de0-a1c2-2c7eac49b29a" "cfbfa039-b458-4e32-9baf-5275b4e083f1"
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 			"f9b8c4a9-aac1-4200-87a8-1930f4f1eb3f"
 		)
 	)

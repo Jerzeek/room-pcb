@@ -4273,6 +4273,10 @@
 		(uuid "b3f7dd8f-400d-4c1f-aeaa-d5a44feb1a3a")
 	)
 	(no_connect
+		(at 101.6 153.67)
+		(uuid "ab1d581f-3c5e-4922-b00e-b699327edc7f")
+	)
+	(no_connect
 		(at 91.44 43.18)
 		(uuid "bd8a0e57-c028-4753-a525-01b8414d823b")
 	)
@@ -5938,6 +5942,7 @@
 			)
 		)
 	)
+<<<<<<< HEAD
 	(global_label "SCL"
 		(shape input)
 		(at 101.6 153.67 0)
@@ -5960,6 +5965,8 @@
 			)
 		)
 	)
+=======
+>>>>>>> 826961872ea5dff079b2aeff616ce17214b56293
 	(global_label "RST"
 		(shape input)
 		(at 181.61 87.63 180)
