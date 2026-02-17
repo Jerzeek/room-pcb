@@ -26,6 +26,42 @@
 #include <ld2410.h>
 #include <BH1750.h>
 
+// --- FILTERING CLASS ---
+template <typename T, int SIZE>
+class MovingQuantile {
+  T buffer[SIZE];
+  uint8_t idx = 0;
+  uint8_t count = 0;
+  float quantile;
+
+public:
+  MovingQuantile(float q = 0.5) : quantile(q) {}
+
+  void add(T value) {
+    buffer[idx] = value;
+    idx = (idx + 1) % SIZE;
+    if (count < SIZE) count++;
+  }
+
+  T get() {
+    if (count == 0) return 0;
+    T sorted[SIZE];
+    for (uint8_t i = 0; i < count; i++) sorted[i] = buffer[i];
+    // Simple Bubble Sort
+    for (uint8_t i = 0; i < count - 1; i++) {
+      for (uint8_t j = 0; j < count - i - 1; j++) {
+        if (sorted[j] > sorted[j + 1]) {
+          T temp = sorted[j];
+          sorted[j] = sorted[j + 1];
+          sorted[j + 1] = temp;
+        }
+      }
+    }
+    int qIdx = (int)(quantile * (count - 1));
+    return sorted[qIdx];
+  }
+};
+
 // --- ZIGBEE CONFIG ---
 #define EP_CO2 10
 #define EP_TEMP_HUM 11  // Combined endpoint for Temp & Humidity
@@ -43,7 +79,7 @@ ZigbeeOccupancySensor     zbOcc(EP_OCCUPANCY);
 // --- PIN DEFINITIONS & OBJECTS ---
 
 // 1. Cozir CO2 (SoftwareSerial)
-SoftwareSerial sws(20, 19); 
+SoftwareSerial sws(20, 19); //RX TX
 COZIR czr(&sws);
 C0ZIRParser czrp;
 
@@ -56,42 +92,10 @@ BH1750 lightMeter(0x5C);
 Adafruit_NeoPixel pixels(NUMPIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
 // 4. LD2410 Radar (Hardware Serial)
-#if defined(ESP32)
-  #ifdef ESP_IDF_VERSION_MAJOR 
-    #if CONFIG_IDF_TARGET_ESP32 
-      #define MONITOR_SERIAL Serial
-      #define RADAR_SERIAL Serial1
-      #define RADAR_RX_PIN 32
-      #define RADAR_TX_PIN 33
-    #elif CONFIG_IDF_TARGET_ESP32S2
-      #define MONITOR_SERIAL Serial
-      #define RADAR_SERIAL Serial1
-      #define RADAR_RX_PIN 9
-      #define RADAR_TX_PIN 8 
-    #elif CONFIG_IDF_TARGET_ESP32C6
-      #define MONITOR_SERIAL Serial
-      #define RADAR_SERIAL Serial1
-      #define RADAR_RX_PIN 7
-      #define RADAR_TX_PIN 5 
-    #else 
-      #define MONITOR_SERIAL Serial
-      #define RADAR_SERIAL Serial1
-      #define RADAR_RX_PIN 32
-      #define RADAR_TX_PIN 33
-    #endif
-  #else 
-    #define MONITOR_SERIAL Serial
-    #define RADAR_SERIAL Serial1
-    #define RADAR_RX_PIN 32
-    #define RADAR_TX_PIN 33
-  #endif
-#elif defined(__AVR_ATmega32U4__)
-  #define MONITOR_SERIAL Serial
-  #define RADAR_SERIAL Serial1
-  #define RADAR_RX_PIN 0
-  #define RADAR_TX_PIN 1
-#endif
-
+#define MONITOR_SERIAL Serial
+#define RADAR_SERIAL Serial1
+#define RADAR_RX_PIN 7
+#define RADAR_TX_PIN 5 
 ld2410 radar;
 
 // --- TIMERS ---
@@ -100,11 +104,10 @@ uint32_t lastCozirReport = 0;
 uint32_t lastLightReport = 0;
 
 // --- FILTERING ---
-#define HUM_HISTORY_SIZE 5
-float humHistory[HUM_HISTORY_SIZE];
-uint8_t humHistoryIdx = 0;
-bool humHistoryFull = false;
-uint8_t humOutlierCount = 0;
+MovingQuantile<uint32_t, 5> co2Filter(0.5);
+MovingQuantile<float, 5> tempFilter(0.5);
+MovingQuantile<float, 5> humFilter(0.5);
+MovingQuantile<float, 5> lightFilter(0.5);
 
 const uint32_t RADAR_REPORT_INTERVAL = 1000;
 const uint32_t COZIR_REPORT_INTERVAL = 5000;
@@ -253,76 +256,57 @@ void loop()
     else
     {
       pixels.setPixelColor(0, pixels.Color(0, 255, 0)); // Green
-      // MONITOR_SERIAL.println(F("[Radar] No target"));
+      MONITOR_SERIAL.println(F("[Radar] No target"));
     }
     pixels.show();
   }
 
   // --- READ COZIR STREAM ---
-  while (sws.available()) {
-    int field = czrp.nextChar(sws.read());
-    if (field != 0) {
-      // Filter CO2 (Max 4000)
-      if (field == 'Z') {
-        uint32_t co2 = czrp.CO2();
-        if (co2 <= 4000) zbCo2.setCarbonDioxide(co2);
-      }
-      // Filter Temp (0-100 C)
-      else if (field == 'T') {
-        float t = czrp.celsius();
-        if (t >= 0 && t <= 100) zbTempHum.setTemperature(t);
-      }
-      // Filter Humidity (Outlier Detection)
-      else if (field == 'H') {
-        float h = czrp.humidity();
-        if (h >= 0 && h <= 100) {
-          float avg = 0;
-          int count = humHistoryFull ? HUM_HISTORY_SIZE : humHistoryIdx;
-          if (count > 0) {
-            for (int i = 0; i < count; i++) avg += humHistory[i];
-            avg /= count;
-            
-            // Check if new reading deviates too much (e.g. > 20%) from average
-            if (abs(h - avg) < 20.0) {
-              humOutlierCount = 0;
-              zbTempHum.setHumidity(h);
-              humHistory[humHistoryIdx] = h;
-              humHistoryIdx = (humHistoryIdx + 1) % HUM_HISTORY_SIZE;
-              if (humHistoryIdx == 0) humHistoryFull = true;
-            } else {
-              // If outlier persists for >10 readings, accept it as new state
-              if (++humOutlierCount > 10) {
-                humOutlierCount = 0;
-                for(int k=0; k<HUM_HISTORY_SIZE; k++) humHistory[k] = h;
-                humHistoryFull = true;
-                humHistoryIdx = 0;
-                zbTempHum.setHumidity(h);
-              }
-            }
-          } else {
-            // First reading
-            zbTempHum.setHumidity(h);
-            humHistory[humHistoryIdx++] = h;
-          }
-        }
-      }
-    }
-  }
+
 
   // --- REPORT COZIR (Serial Monitor) ---
   if (currentMillis - lastCozirReport > COZIR_REPORT_INTERVAL) {
     lastCozirReport = currentMillis;
-    
+
+    while (sws.available()) {
+      int field = czrp.nextChar(sws.read());
+      if (field != 0) {
+        // Filter CO2 (Max 4000)
+        if (field == 'Z') {
+          uint32_t co2 = czrp.CO2();
+          if (co2 <= 4000) {
+            co2Filter.add(co2);
+            zbCo2.setCarbonDioxide(co2Filter.get());
+          }
+        }
+        // Filter Temp (0-100 C)
+        else if (field == 'T') {
+          float t = czrp.celsius();
+          if (t >= 0 && t <= 100) {
+            tempFilter.add(t);
+            zbTempHum.setTemperature(tempFilter.get());
+          }
+        }
+        // Filter Humidity
+        else if (field == 'H') {
+          float h = czrp.humidity();
+          if (h >= 0 && h <= 100) {
+            humFilter.add(h);
+            zbTempHum.setHumidity(humFilter.get());
+          }
+        }
+      }
+    }
     uint32_t c = czrp.CO2(); 
     float t = czrp.celsius();
     float h = czrp.humidity();
 
-    // MONITOR_SERIAL.print(F("[Cozir] Temp: "));
-    // MONITOR_SERIAL.print(t);
-    // MONITOR_SERIAL.print(F(" C\tHum: "));
-    // MONITOR_SERIAL.print(h);
-    // MONITOR_SERIAL.print(F("%\tCO2: "));
-    // MONITOR_SERIAL.println(c);
+    MONITOR_SERIAL.print(F("[Cozir] Temp: "));
+    MONITOR_SERIAL.print(t);
+    MONITOR_SERIAL.print(F(" C\tHum: "));
+    MONITOR_SERIAL.print(h);
+    MONITOR_SERIAL.print(F("%\tCO2: "));
+    MONITOR_SERIAL.println(c);
   }
 
   // --- REPORT LIGHT ---
@@ -330,17 +314,19 @@ void loop()
     lastLightReport = currentMillis;
       
       float lux = lightMeter.readLightLevel();
+      lightFilter.add(lux);
+      float filteredLux = lightFilter.get();
       
       // 1. Calculate the Zigbee "MeasuredValue"
       // Formula: 10000 * log10(Lux) + 1
       uint16_t zigbeeRaw;
       
-      if (lux <= 0.0001) { 
+      if (filteredLux <= 0.0001) { 
         zigbeeRaw = 0; // Darkness
-      } else if (lux > 1000000) {
+      } else if (filteredLux > 1000000) {
         zigbeeRaw = 0xfffe; // Maximum defined value
       } else {
-        zigbeeRaw = (uint16_t)(10000 * log10(lux) + 1);
+        zigbeeRaw = (uint16_t)(10000 * log10(filteredLux) + 1);
       }
 
       // 2. Log both for debugging
