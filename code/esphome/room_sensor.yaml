@@ -1,6 +1,6 @@
 esphome:
-  name: room-sensor
-  friendly_name: room_sensor
+  name: room-sensor3
+  friendly_name: room_sensor3
 
 esp32:
   board: esp32-c6-devkitc-1
@@ -60,8 +60,9 @@ ld2410:
 light:
   - platform: esp32_rmt_led_strip
     rgb_order: GRB
-    pin: GPIO8
-    num_leds: 1
+    id: co2_led
+    pin: GPIO23
+    num_leds: 2
     chipset: ws2812
     name: "My Light"
 
@@ -140,19 +141,58 @@ sensor:
     id: my_cozir  # Required for calibration actions
     co2:
       name: "Cozir CO2"
+      filters:
+      - exponential_moving_average:
+          alpha: 0.1
+          send_every: 2
+          send_first_at: 1
+      on_value_range:
+          - below: 800.0
+            then:
+              - light.turn_on:
+                  id: co2_led
+                  brightness: 100%
+                  red: 0.0
+                  green: 0.7
+                  blue: 0.0
+          - above: 800.0
+            below: 1200.0
+            then:
+              - light.turn_on:
+                  id: co2_led
+                  brightness: 100%
+                  red: 0.8
+                  green: 0.7
+                  blue: 0.0
+          - above: 1200.0
+            then:
+              - light.turn_on:
+                  id: co2_led
+                  brightness: 100%
+                  red: 0.7
+                  green: 0.0
+                  blue: 0.0
     temperature:
       name: "Cozir Temperature"
       # Example configuration entry
       filters:
-        - offset: -8.0
+        - offset: -5.0
     humidity:
       name: "Cozir Humidity"
-    update_interval: 60s
+    update_interval: 30s
   - platform: bh1750
     name: "BH1750 Illuminance"
     address: 0x23
     update_interval: 60s
-
+  - platform: aht10
+    variant: AHT20
+    temperature:
+      name: "Room sensor Temperature"
+      filters:
+        - offset: -3.0
+    humidity:
+      name: "Room sensor Humidity"
+    update_interval: 60s
 button:
   - platform: template
     name: "Calibrate Fresh Air (400ppm)"
