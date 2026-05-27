@@ -1,0 +1,61 @@
+# ─── KiCad ───────────────────────────────────────────────────────────────────
+
+# Lock files (created when a file is open in KiCad)
+*.lck
+~*
+
+# Auto-save / recovery files
+_autosave-*
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*.bak
+*.bak.*
+
+# Local preference file (not project-specific settings)
+*.kicad_prl
+
+# Footprint cache — regenerated automatically by KiCad
+fp-info-cache
+
+# KiCad project backup archives created by KiCad's auto-backup feature
+*-backups/
+*.kicad_pcb.lck
+*.kicad_sch.lck
+
+# KiCad history directory (used by some KiCad plugins / VS Code extension)
+.history/
+
+# ─── Production outputs — KEEP in git ────────────────────────────────────────
+# The pcb/production/ directory is intentionally tracked.
+# Do NOT add pcb/production/ here.
+
+# But exclude the backups subdirectory inside production if any fab tool creates it
+pcb/production/backups/
+
+# ─── ESPHome ─────────────────────────────────────────────────────────────────
+
+# Secrets — never commit Wi-Fi credentials or API keys
+secrets.yaml
+**/secrets.yaml
+
+# ESPHome build artefacts
+.esphome/
+
+# ─── Arduino / PlatformIO ────────────────────────────────────────────────────
+.pio/
+.pioenvs/
+.piolibdeps/
+build/
+
+# ─── macOS ───────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# ─── Editors ─────────────────────────────────────────────────────────────────
+.vscode/
+*.swp
+*.swo
+*~
