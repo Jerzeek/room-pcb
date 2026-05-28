@@ -2,6 +2,8 @@
 
 [![License: CERN OHL-S v2](https://img.shields.io/badge/License-CERN%20OHL--S%20v2-green.svg)](LICENSE)
 
+![Room Sensor](room%20sensor%20hero.png)
+
 An open-source, mains-powered room sensor PCB based on the ESP32-C6. Measures CO2, temperature, humidity, illuminance, and presence, with a WS2812B LED status indicator. Supports both **ESPHome** (Wi-Fi / Home Assistant) and **Zigbee** firmware out of the box.
 
 ---
